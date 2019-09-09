@@ -9,11 +9,18 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/willgorman/homebridge-unicorn-hat/internal/pkg/fake"
+	"github.com/willgorman/homebridge-unicorn-hat/internal/pkg/light"
 
 	log "github.com/sirupsen/logrus"
 )
 
+var theLight light.Light
+
 func main() {
+
+	theLight = &fake.FakeLight{}
+
 	r := mux.NewRouter()
 	r.HandleFunc("/api/switch", SwitchStatusHandler)
 	r.HandleFunc("/api/switch/on", SwitchHandler(true))
@@ -25,8 +32,7 @@ func main() {
 	http.Handle("/", r)
 
 	srv := &http.Server{
-		Addr: "0.0.0.0:8080",
-		// Good practice to set timeouts to avoid Slowloris attacks.
+		Addr:         "0.0.0.0:8080",
 		WriteTimeout: time.Second * 15,
 		ReadTimeout:  time.Second * 15,
 		IdleTimeout:  time.Second * 60,
@@ -63,14 +69,38 @@ func main() {
 }
 
 func SwitchStatusHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(200)
+
 	log.Infof("Getting switch status")
-	io.WriteString(w, "0")
+	on, err := theLight.IsOn()
+	if err != nil {
+		w.WriteHeader(500)
+		io.WriteString(w, err.Error())
+	}
+	var status string
+	if on {
+		status = "0"
+	} else {
+		status = "1"
+	}
+	io.WriteString(w, status)
 }
 
 func SwitchHandler(on bool) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var err error
+		if on {
+			err = theLight.TurnOn()
+		} else {
+			err = theLight.TurnOff()
+		}
+		if err != nil {
+			w.WriteHeader(500)
+			io.WriteString(w, err.Error())
+			return
+		}
+
 		w.WriteHeader(200)
+
 	}
 }
 
