@@ -6,11 +6,12 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/willgorman/homebridge-unicorn-hat/internal/pkg/fake"
 	"github.com/willgorman/homebridge-unicorn-hat/internal/pkg/light"
+	"github.com/willgorman/homebridge-unicorn-hat/internal/pkg/unicorn"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -19,7 +20,14 @@ var theLight light.Light
 
 func main() {
 
-	theLight = &fake.FakeLight{}
+	var err error
+	theLight, err = unicorn.NewUnicornLight()
+	if err != nil {
+		panic(err)
+	}
+
+	theLight.SetColor(255, 0, 255)
+	theLight.SetBrightness(20)
 
 	r := mux.NewRouter()
 	r.HandleFunc("/api/switch", SwitchStatusHandler)
@@ -105,15 +113,34 @@ func SwitchHandler(on bool) func(http.ResponseWriter, *http.Request) {
 }
 
 func BrightnessHandler(w http.ResponseWriter, r *http.Request) {
-	log.Infof("Getting brightness %s", 100)
-	w.WriteHeader(200)
-	io.WriteString(w, "100")
+
+	b, err := theLight.GetBrightness()
+	if err != nil {
+		w.WriteHeader(500)
+		io.WriteString(w, err.Error())
+		return
+	}
+
+	log.Infof("Getting brightness %d", b)
+	io.WriteString(w, strconv.Itoa(int(b)))
 }
 
 func SetBrightnessHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	brightness := vars["value"]
 	log.Infof("Setting brightness to %s", brightness)
+	bint, err := strconv.ParseUint(brightness, 10, 8)
+	if err != nil {
+		w.WriteHeader(500)
+		io.WriteString(w, err.Error())
+	}
+
+	err = theLight.SetBrightness(uint(bint))
+	if err != nil {
+		w.WriteHeader(500)
+		io.WriteString(w, err.Error())
+	}
+
 	w.WriteHeader(200)
 }
 

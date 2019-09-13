@@ -4,10 +4,10 @@ import "fmt"
 
 type FakeLight struct {
 	on         bool
-	brightness int
-	red        int
-	green      int
-	blue       int
+	brightness uint
+	red        uint
+	green      uint
+	blue       uint
 }
 
 func (f *FakeLight) IsOn() (bool, error) {
@@ -24,11 +24,11 @@ func (f *FakeLight) TurnOff() error {
 	return nil
 }
 
-func (f *FakeLight) GetBrightness() (int, error) {
+func (f *FakeLight) GetBrightness() (uint, error) {
 	return f.brightness, nil
 }
 
-func (f *FakeLight) SetBrightness(brightness int) error {
+func (f *FakeLight) SetBrightness(brightness uint) error {
 	if brightness > 255 {
 		return fmt.Errorf("Value %d exceeds max brightness of 255", brightness)
 	}
@@ -42,7 +42,7 @@ func (f *FakeLight) SetBrightness(brightness int) error {
 
 }
 
-func (f *FakeLight) SetColor(r int, g int, b int) error {
+func (f *FakeLight) SetColor(r uint, g uint, b uint) error {
 	f.red = r
 	f.green = g
 	f.blue = b
@@ -50,6 +50,6 @@ func (f *FakeLight) SetColor(r int, g int, b int) error {
 	return nil
 }
 
-func (f *FakeLight) GetColor() (int, int, int, error) {
+func (f *FakeLight) GetColor() (uint, uint, uint, error) {
 	return f.red, f.blue, f.green, nil
 }
