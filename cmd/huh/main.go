@@ -72,6 +72,7 @@ func main() {
 	// <-ctx.Done() if your application should wait for other services
 	// to finalize based on context cancellation.
 	log.Println("shutting down")
+	theLight.TurnOff()
 	os.Exit(0)
 
 }
