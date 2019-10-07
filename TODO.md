@@ -1,0 +1,4 @@
+- [ ] Auto build, copy, and restart remotely on Pi after save
+- [ ] persist state across restarts
+- [ ] command line
+- [ ] systemd unit

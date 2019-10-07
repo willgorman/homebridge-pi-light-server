@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -10,24 +11,22 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	log "github.com/sirupsen/logrus"
 	"github.com/willgorman/homebridge-unicorn-hat/internal/pkg/light"
 	"github.com/willgorman/homebridge-unicorn-hat/internal/pkg/unicorn"
-
-	log "github.com/sirupsen/logrus"
 )
 
 var theLight light.Light
 
 func main() {
+	log.SetReportCaller(true)
+	log.SetLevel(log.DebugLevel)
 
 	var err error
 	theLight, err = unicorn.NewUnicornLight()
 	if err != nil {
 		panic(err)
 	}
-
-	theLight.SetColor(255, 0, 255)
-	theLight.SetBrightness(20)
 
 	r := mux.NewRouter()
 	r.HandleFunc("/api/switch", SwitchStatusHandler)
@@ -83,14 +82,18 @@ func SwitchStatusHandler(w http.ResponseWriter, r *http.Request) {
 	on, err := theLight.IsOn()
 	if err != nil {
 		w.WriteHeader(500)
+		log.Errorf("Failed to get status: %v", err)
 		io.WriteString(w, err.Error())
 	}
 	var status string
 	if on {
-		status = "0"
-	} else {
+		log.Infof("The light is on")
 		status = "1"
+	} else {
+		log.Infof("The light is off")
+		status = "0"
 	}
+	log.Infof("Returning status: %v", status)
 	io.WriteString(w, status)
 }
 
@@ -99,10 +102,13 @@ func SwitchHandler(on bool) func(http.ResponseWriter, *http.Request) {
 		var err error
 		if on {
 			err = theLight.TurnOn()
+			log.Info("Turned light on")
 		} else {
 			err = theLight.TurnOff()
+			log.Info("Turned light off")
 		}
 		if err != nil {
+			log.Errorf("Failed to turn light (%v): %v", on, err)
 			w.WriteHeader(500)
 			io.WriteString(w, err.Error())
 			return
@@ -154,6 +160,40 @@ func ColorHandler(w http.ResponseWriter, r *http.Request) {
 func SetColorHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	color := vars["value"]
-	log.Infof("Setting color", color)
+	log.Infof("Setting color %v", color)
+
+	rHex := color[0:2]
+	gHex := color[2:4]
+	bHex := color[4:6]
+	red, err := strconv.ParseInt(rHex, 16, 64)
+	if err != nil {
+		w.WriteHeader(400)
+		io.WriteString(w, "Invalid color")
+		log.Errorf("Failed to set color: %v", err)
+		return
+	}
+	green, err := strconv.ParseInt(gHex, 16, 64)
+	if err != nil {
+		w.WriteHeader(400)
+		io.WriteString(w, "Invalid color")
+		log.Errorf("Failed to set color: %v", err)
+		return
+	}
+	blue, err := strconv.ParseInt(bHex, 16, 64)
+	if err != nil {
+		w.WriteHeader(400)
+		io.WriteString(w, "Invalid color")
+		log.Errorf("Failed to set color: %v", err)
+		return
+	}
+
+	log.Info("Setting color to light")
+	err = theLight.SetColor(uint(red), uint(green), uint(blue))
+	if err != nil {
+		w.WriteHeader(500)
+		io.WriteString(w, fmt.Sprintf("Failed to set color: %v", err))
+		log.Errorf("Failed to set color: %v", err)
+		return
+	}
 	w.WriteHeader(200)
 }

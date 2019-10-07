@@ -6,10 +6,14 @@ import (
 
 	"github.com/arussellsaw/unicorn-go"
 	util "github.com/arussellsaw/unicorn-go/util"
+	log "github.com/sirupsen/logrus"
 	"github.com/willgorman/homebridge-unicorn-hat/internal/pkg/light"
 )
 
 var w = util.White
+
+var defaultBrightness = uint(20)
+var defaultColor = light.Color{R: 255, G: 255, B: 255}
 
 type UnicornLight struct {
 	client     unicorn.Client
@@ -27,11 +31,16 @@ func NewUnicornLight() (light.Light, error) {
 	}
 
 	return &UnicornLight{
-		client: c,
+		client:     c,
+		color:      defaultColor,
+		brightness: defaultBrightness,
 	}, nil
 }
 
 func (u *UnicornLight) IsOn() (bool, error) {
+	u.mu.Lock()
+	defer u.mu.Unlock()
+
 	return u.on, nil
 }
 
@@ -44,6 +53,10 @@ func (u *UnicornLight) TurnOn() error {
 
 	u.mu.Lock()
 	defer u.mu.Unlock()
+
+	if u.brightness == 0 {
+		u.brightness = defaultBrightness
+	}
 
 	err := u.client.SetBrightness(u.brightness)
 	if err != nil {
@@ -71,6 +84,8 @@ func (u *UnicornLight) TurnOff() error {
 }
 
 func (u *UnicornLight) GetBrightness() (uint, error) {
+	u.mu.Lock()
+	defer u.mu.Unlock()
 	return u.brightness, nil
 }
 
@@ -80,19 +95,24 @@ func (u *UnicornLight) SetBrightness(brightness uint) error {
 	}
 
 	u.mu.Lock()
-	defer u.mu.Unlock()
 
 	u.brightness = brightness
-	err := u.client.SetBrightness(brightness)
-	if err != nil {
-		return err
-	}
+	log.Infof("[unicorn] brightness set to %v", brightness)
+	// err := u.client.SetBrightness(brightness)
+	// if err != nil {
+	// 	return err
+	// }
 
-	return u.client.Show()
+	u.mu.Unlock()
+	if brightness > 0 {
+		return u.TurnOn()
+	} else {
+		return u.TurnOff()
+	}
 }
 
 func (u *UnicornLight) SetColor(r uint, g uint, b uint) error {
-	color, err := light.ForRGB(r, g, b)
+	color, err := light.ForRGB(g, r, b)
 	if err != nil {
 		return err
 	}
@@ -105,6 +125,8 @@ func (u *UnicornLight) SetColor(r uint, g uint, b uint) error {
 	for i := range pixels {
 		pixels[i] = u.pixelFromColor()
 	}
+
+	log.Debugf("[unicorn] Setting all pixels to %v", u.pixelFromColor())
 
 	err = u.client.SetAllPixels(pixels)
 	if err != nil {
