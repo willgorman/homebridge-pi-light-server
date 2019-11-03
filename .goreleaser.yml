@@ -1,0 +1,48 @@
+# This is an example goreleaser.yaml file with some sane defaults.
+# Make sure to check the documentation at http://goreleaser.com
+before:
+  hooks:
+    # you may remove this if you don't use vgo
+    - go mod tidy
+    # you may remove this if you don't need go generate
+    - go generate ./...
+builds:
+- env:
+  - CGO_ENABLED=0
+  main: ./cmd/huh/main.go
+  goos:
+  - linux
+  goarch:
+  - arm
+  goarm:
+  - 6
+  - 7
+archives:
+- replacements:
+    darwin: Darwin
+    linux: Linux
+    windows: Windows
+    386: i386
+    amd64: x86_64
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'
+nfpms:
+- vendor: Coaxial Flutter Labs
+  maintainer: Will Gorman<will@coaxialflutter.com>
+  description: Homebridge HTTP-RGB server for controlling Unicorn Hat as a HomeKit light
+  formats:
+  - deb
+  - rpm
+  files:
+    "scripts/systemd/homebridge-unicorn-hat.service": "/etc/systemd/system/homebridge-unicorn-hat.service"
+  scripts:
+    postinstall: "scripts/systemd/postinstall.sh"
+    preremove: "scripts/systemd/preremove.sh"

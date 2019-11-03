@@ -1,4 +1,11 @@
 - [ ] Auto build, copy, and restart remotely on Pi after save
 - [ ] persist state across restarts
 - [ ] command line
+  - [ ] option for fake/real
+  - [ ] max brightness
 - [ ] systemd unit
+  - [ ] raspbian package (just to see how it works)
+  - [ ] goreleaser can create debs and rpms
+- [ ] config template for homebridge
+- [ ] clean up logging
+

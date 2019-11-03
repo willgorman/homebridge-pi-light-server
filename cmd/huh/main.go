@@ -29,6 +29,9 @@ func main() {
 	}
 
 	r := mux.NewRouter()
+	r.HandleFunc("/health", func(w http.ResponseWriter, req *http.Request) {
+		w.Write([]byte("OK!"))
+	})
 	r.HandleFunc("/api/switch", SwitchStatusHandler)
 	r.HandleFunc("/api/switch/on", SwitchHandler(true))
 	r.HandleFunc("/api/switch/off", SwitchHandler(false))

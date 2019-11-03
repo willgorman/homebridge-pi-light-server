@@ -1,0 +1,8 @@
+[Unit]
+Description=Homebridge Unicorn Hat Daemon
+
+[Service]
+ExecStart=/usr/local/bin/homebridge-unicorn-hat
+
+[Install]
+WantedBy=multi-user.target
