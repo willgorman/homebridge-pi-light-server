@@ -12,21 +12,56 @@ import (
 
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
+	"github.com/willgorman/homebridge-unicorn-hat/internal/pkg/fake"
 	"github.com/willgorman/homebridge-unicorn-hat/internal/pkg/light"
 	"github.com/willgorman/homebridge-unicorn-hat/internal/pkg/unicorn"
 )
 
 var theLight light.Light
 
-func main() {
+func init() {
+	viper.AutomaticEnv()
+	viper.SetEnvPrefix("huh")
+	viper.SetDefault("log_level", "warn")
+	viper.SetDefault("fake_light", false)
+
 	log.SetReportCaller(true)
-	log.SetLevel(log.DebugLevel)
+	switch viper.GetString("log_level") {
+	case "error":
+		log.SetLevel(log.ErrorLevel)
+	case "warn":
+		log.SetLevel(log.WarnLevel)
+	case "info":
+		log.SetLevel(log.InfoLevel)
+	case "debug":
+		log.SetLevel(log.DebugLevel)
+	case "trace":
+		log.SetLevel(log.TraceLevel)
+	}
+
+}
+
+func newLight() light.Light {
+	if viper.GetBool("fake_light") {
+		log.Info("Creating fake light")
+		return &fake.FakeLight{}
+	}
 
 	var err error
-	theLight, err = unicorn.NewUnicornLight()
+	l, err := unicorn.NewUnicornLight()
 	if err != nil {
 		panic(err)
 	}
+
+	return l
+}
+
+func main() {
+	log.SetReportCaller(true)
+
+	theLight = newLight()
+	log.Infof("The light: %v", theLight)
 
 	r := mux.NewRouter()
 	r.HandleFunc("/health", func(w http.ResponseWriter, req *http.Request) {
@@ -81,7 +116,7 @@ func main() {
 
 func SwitchStatusHandler(w http.ResponseWriter, r *http.Request) {
 
-	log.Infof("Getting switch status")
+	log.Infof("Getting switch status for light %v", theLight)
 	on, err := theLight.IsOn()
 	if err != nil {
 		w.WriteHeader(500)

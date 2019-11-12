@@ -9,3 +9,4 @@
 - [ ] config template for homebridge
 - [ ] clean up logging
 
+- [ ] systemd restart on crash
