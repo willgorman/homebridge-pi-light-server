@@ -68,6 +68,8 @@ func (u *UnicornLight) TurnOn() error {
 		return err
 	}
 
+	u.on = true
+
 	return u.client.Show()
 }
 
@@ -80,6 +82,8 @@ func (u *UnicornLight) TurnOff() error {
 		return err
 	}
 
+	u.on = false
+
 	return u.client.Show()
 }
 
@@ -90,18 +94,14 @@ func (u *UnicornLight) GetBrightness() (uint, error) {
 }
 
 func (u *UnicornLight) SetBrightness(brightness uint) error {
-	if brightness < 0 || brightness > 255 {
-		return fmt.Errorf("Brightness (%d) must be > 0 and < 255")
+	if brightness > 255 {
+		return fmt.Errorf("brightness (%d) must be > 0 and < 255", brightness)
 	}
 
 	u.mu.Lock()
 
 	u.brightness = brightness
 	log.Infof("[unicorn] brightness set to %v", brightness)
-	// err := u.client.SetBrightness(brightness)
-	// if err != nil {
-	// 	return err
-	// }
 
 	u.mu.Unlock()
 	if brightness > 0 {

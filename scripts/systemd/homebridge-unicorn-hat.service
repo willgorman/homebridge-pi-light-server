@@ -3,6 +3,7 @@ Description=Homebridge Unicorn Hat Daemon
 
 [Service]
 ExecStart=/usr/local/bin/homebridge-unicorn-hat
+Environment="HUH_LOG_LEVEL=debug"
 
 [Install]
 WantedBy=multi-user.target
