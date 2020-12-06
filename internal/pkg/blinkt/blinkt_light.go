@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"sync"
 
+	log "github.com/sirupsen/logrus"
+
 	. "github.com/alexellis/blinkt_go/sysfs"
 	"github.com/willgorman/homebridge-unicorn-hat/internal/pkg/light"
 )
@@ -17,9 +19,9 @@ func New() *blinktLight {
 	}
 }
 
-// convert a 0..255 brightness to 0..1.0
+// convert a 0..100 brightness to 0..1.0
 func normalize(brightness uint) float64 {
-	return float64(brightness / 255)
+	return float64(brightness) / 100.0
 }
 
 type blinktLight struct {
@@ -39,7 +41,7 @@ func (l *blinktLight) IsOn() (bool, error) {
 func (l *blinktLight) TurnOn() error {
 	l.Lock()
 	defer l.Unlock()
-	l.light.SetAll(l.color.ToInts()).Show()
+	l.light.SetAll(l.color.ToInts()).SetBrightness(normalize(l.brightness)).Show()
 	l.on = true
 	return nil
 }
@@ -49,6 +51,7 @@ func (l *blinktLight) TurnOff() error {
 	defer l.Unlock()
 	l.light.Clear()
 	l.light.Show()
+	l.on = false
 	// leave brightness alone so it can use existing brightness when turned on
 	return nil
 }
@@ -66,7 +69,9 @@ func (l *blinktLight) SetBrightness(brightness uint) error {
 		return fmt.Errorf("brightness (%d) must be > 0 and < 255", brightness)
 	}
 	l.brightness = brightness
-	l.light.SetBrightness(normalize(brightness)).Show()
+	n := normalize(brightness)
+	log.Infof("Applying normalized brightness %f", n)
+	l.light.SetBrightness(n).Show()
 	return nil
 }
 
