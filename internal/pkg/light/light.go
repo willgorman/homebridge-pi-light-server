@@ -26,3 +26,7 @@ func ForRGB(r, g, b uint) (*Color, error) {
 
 	return &c, nil
 }
+
+func (c Color) ToInts() (r, g, b int) {
+	return int(c.R), int(c.G), int(c.B)
+}

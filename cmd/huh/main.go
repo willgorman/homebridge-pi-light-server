@@ -13,6 +13,7 @@ import (
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/willgorman/homebridge-unicorn-hat/internal/pkg/blinkt"
 	"github.com/willgorman/homebridge-unicorn-hat/internal/pkg/fake"
 	"github.com/willgorman/homebridge-unicorn-hat/internal/pkg/light"
 	"github.com/willgorman/homebridge-unicorn-hat/internal/pkg/unicorn"
@@ -24,7 +25,7 @@ func init() {
 	viper.AutomaticEnv()
 	viper.SetEnvPrefix("huh")
 	viper.SetDefault("log_level", "warn")
-	viper.SetDefault("fake_light", false)
+	viper.SetDefault("light_type", "unicorn")
 
 	log.SetReportCaller(true)
 	switch viper.GetString("log_level") {
@@ -43,18 +44,22 @@ func init() {
 }
 
 func newLight() light.Light {
-	if viper.GetBool("fake_light") {
+	lightType := viper.GetString("light_type")
+	switch lightType {
+	case "unicorn":
+		var err error
+		l, err := unicorn.NewUnicornLight()
+		if err != nil {
+			panic(err)
+		}
+		return l
+	case "blinkt":
+		return blinkt.New()
+	default:
 		log.Info("Creating fake light")
 		return &fake.FakeLight{}
 	}
 
-	var err error
-	l, err := unicorn.NewUnicornLight()
-	if err != nil {
-		panic(err)
-	}
-
-	return l
 }
 
 func main() {
