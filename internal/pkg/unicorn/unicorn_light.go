@@ -2,6 +2,7 @@ package unicorn
 
 import (
 	"fmt"
+	"math"
 	"sync"
 
 	"github.com/arussellsaw/unicorn-go"
@@ -58,7 +59,7 @@ func (u *UnicornLight) TurnOn() error {
 		u.brightness = defaultBrightness
 	}
 
-	err := u.client.SetBrightness(u.brightness)
+	err := u.client.SetBrightness(uint(math.Round(float64(u.brightness) * (255.0 / 100.0))))
 	if err != nil {
 		return err
 	}
