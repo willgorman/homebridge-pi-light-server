@@ -7,7 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	. "github.com/alexellis/blinkt_go/sysfs"
-	"github.com/willgorman/homebridge-unicorn-hat/internal/pkg/light"
+	"github.com/willgorman/homebridge-pi-light/internal/pkg/light"
 )
 
 func New() *blinktLight {
@@ -83,13 +83,17 @@ func (l *blinktLight) SetColor(r uint, g uint, b uint) error {
 	if err != nil {
 		return err
 	}
-	l.color = *color
+	l.color = color
 	l.light.SetAll(color.ToInts()).Show()
 	return nil
 }
 
-func (l *blinktLight) GetColor() (uint, uint, uint, error) {
+func (l *blinktLight) GetColor() (light.Color, error) {
 	l.RLock()
-	defer l.Unlock()
-	return l.color.R, l.color.G, l.color.B, nil
+	defer l.RUnlock()
+	return l.color, nil
+}
+
+func (l *blinktLight) String() string {
+	return fmt.Sprintf("blinkt{on: %t, brightness: %d, color: %s}", l.on, l.brightness, l.color)
 }

@@ -1,4 +1,4 @@
 #!/bin/bash
 
-systemctl enable homebridge-unicorn-hat
-systemctl restart homebridge-unicorn-hat
+systemctl enable homebridge-pi-light
+systemctl restart homebridge-pi-light

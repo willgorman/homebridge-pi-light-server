@@ -1,4 +1,4 @@
-module github.com/willgorman/homebridge-unicorn-hat
+module github.com/willgorman/homebridge-pi-light
 
 go 1.12
 

@@ -8,7 +8,7 @@ import (
 	"github.com/arussellsaw/unicorn-go"
 	util "github.com/arussellsaw/unicorn-go/util"
 	log "github.com/sirupsen/logrus"
-	"github.com/willgorman/homebridge-unicorn-hat/internal/pkg/light"
+	"github.com/willgorman/homebridge-pi-light/internal/pkg/light"
 )
 
 var w = util.White
@@ -121,7 +121,7 @@ func (u *UnicornLight) SetColor(r uint, g uint, b uint) error {
 	u.mu.Lock()
 	defer u.mu.Unlock()
 
-	u.color = *color
+	u.color = color
 	pixels := [64]unicorn.Pixel{}
 	for i := range pixels {
 		pixels[i] = u.pixelFromColor()
@@ -137,11 +137,11 @@ func (u *UnicornLight) SetColor(r uint, g uint, b uint) error {
 	return u.client.Show()
 }
 
-func (u *UnicornLight) GetColor() (uint, uint, uint, error) {
+func (u *UnicornLight) GetColor() (light.Color, error) {
 	u.mu.Lock()
 	defer u.mu.Unlock()
 
-	return u.color.R, u.color.G, u.color.B, nil
+	return u.color, nil
 }
 
 func (u *UnicornLight) pixelFromColor() unicorn.Pixel {
@@ -150,4 +150,8 @@ func (u *UnicornLight) pixelFromColor() unicorn.Pixel {
 
 func colorFromPixel(p unicorn.Pixel) light.Color {
 	return light.Color{R: p.R, G: p.G, B: p.B}
+}
+
+func (u *UnicornLight) String() string {
+	return fmt.Sprintf("unicorn{on: %t, brightness: %d, color: %s}", u.on, u.brightness, u.color)
 }

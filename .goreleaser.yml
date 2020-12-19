@@ -1,5 +1,6 @@
 # This is an example goreleaser.yaml file with some sane defaults.
 # Make sure to check the documentation at http://goreleaser.com
+project_name: homebridge-pi-light
 before:
   hooks:
     # you may remove this if you don't use vgo
@@ -9,7 +10,7 @@ before:
 builds:
 - env:
   - CGO_ENABLED=0
-  main: ./cmd/huh/main.go
+  main: ./cmd/server/main.go
   goos:
   - linux
   goarch:
@@ -42,7 +43,7 @@ nfpms:
   - deb
   - rpm
   files:
-    "scripts/systemd/homebridge-unicorn-hat.service": "/etc/systemd/system/homebridge-unicorn-hat.service"
+    "scripts/systemd/homebridge-pi-light.service": "/etc/systemd/system/homebridge-pi-light.service"
   scripts:
     postinstall: "scripts/systemd/postinstall.sh"
     preremove: "scripts/systemd/preremove.sh"
