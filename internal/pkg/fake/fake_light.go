@@ -1,6 +1,10 @@
 package fake
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/willgorman/homebridge-pi-light/internal/pkg/light"
+)
 
 type FakeLight struct {
 	on         bool
@@ -50,6 +54,6 @@ func (f *FakeLight) SetColor(r uint, g uint, b uint) error {
 	return nil
 }
 
-func (f *FakeLight) GetColor() (uint, uint, uint, error) {
-	return f.red, f.blue, f.green, nil
+func (f *FakeLight) GetColor() (light.Color, error) {
+	return light.ForRGB(f.red, f.blue, f.green)
 }

@@ -7,7 +7,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/willgorman/homebridge-unicorn-hat/internal/pkg/light"
+	"github.com/willgorman/homebridge-pi-light/internal/pkg/light"
 )
 
 type StateStore struct {
@@ -68,5 +68,5 @@ func stateFromLight(l light.Light) (*lightState, error) {
 		Red:        r,
 		Green:      g,
 		Blue:       b,
-	}
+	}, nil
 }

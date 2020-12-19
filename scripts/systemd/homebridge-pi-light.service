@@ -1,0 +1,10 @@
+[Unit]
+Description=Homebridge Pi Light Daemon
+
+[Service]
+ExecStart=/usr/local/bin/homebridge-pi-light
+Environment="HPILIGHT_LOG_LEVEL=debug"
+Environment="HPILIGHT_LIGHT_TYPE=unicorn"
+
+[Install]
+WantedBy=multi-user.target

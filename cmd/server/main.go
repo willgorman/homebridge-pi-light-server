@@ -13,17 +13,17 @@ import (
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"github.com/willgorman/homebridge-unicorn-hat/internal/pkg/blinkt"
-	"github.com/willgorman/homebridge-unicorn-hat/internal/pkg/fake"
-	"github.com/willgorman/homebridge-unicorn-hat/internal/pkg/light"
-	"github.com/willgorman/homebridge-unicorn-hat/internal/pkg/unicorn"
+	"github.com/willgorman/homebridge-pi-light/internal/pkg/blinkt"
+	"github.com/willgorman/homebridge-pi-light/internal/pkg/fake"
+	"github.com/willgorman/homebridge-pi-light/internal/pkg/light"
+	"github.com/willgorman/homebridge-pi-light/internal/pkg/unicorn"
 )
 
 var theLight light.Light
 
 func init() {
 	viper.AutomaticEnv()
-	viper.SetEnvPrefix("huh")
+	viper.SetEnvPrefix("hpilight")
 	viper.SetDefault("log_level", "warn")
 	viper.SetDefault("light_type", "unicorn")
 
@@ -196,8 +196,14 @@ func SetBrightnessHandler(w http.ResponseWriter, r *http.Request) {
 
 func ColorHandler(w http.ResponseWriter, r *http.Request) {
 	log.Infof("Getting color")
+	c, err := theLight.GetColor()
+	if err != nil {
+		w.WriteHeader(500)
+		io.WriteString(w, err.Error())
+	}
+	log.Infof("Getting color: %s (%s)", c.ToHexString(), c)
 	w.WriteHeader(200)
-	io.WriteString(w, "000000")
+	io.WriteString(w, c.ToHexString())
 }
 
 func SetColorHandler(w http.ResponseWriter, r *http.Request) {

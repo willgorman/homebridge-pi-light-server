@@ -4,11 +4,11 @@
   - [ ] option for fake/real
   - [ ] max brightness
 - [ ] systemd unit
-  - [ ] raspbian package (just to see how it works)
-  - [ ] goreleaser can create debs and rpms
+  - [x] raspbian package (just to see how it works)
+  - [x] goreleaser can create debs and rpms
+- [ ] publish package
 - [ ] config template for homebridge
 - [ ] clean up logging
 
 - [ ] systemd restart on crash
 - [ ] turn off on service exit? maybe it should turn off if the service is stopped via some signals but it would also be nice to leave the light on during upgrades
-- [ ] inconsistent state in home app after restart? (or restart of homebridge?)
