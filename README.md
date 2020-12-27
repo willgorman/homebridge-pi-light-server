@@ -11,6 +11,14 @@ Provides a server that allows for the control of different types of Raspberry Pi
 
 ### Packages
 
+At some point I may work on publishing these, but currently the only way to install via packages is to build locally.   Install [goreleaser](https://goreleaser.com/install) first and then run:
+
+```bash
+make snapshot &&
+scp dist/homebridge-unicorn-hat_v0.0.0-next_linux_armv6.deb ${YOUR_PI_HOST?}: &&
+ssh ${YOUR_PI_HOST?}"sudo dpkg -i homebridge-unicorn-hat_v0.0.0-next_linux_armv6.deb"
+```
+
 ## Configuration
 
 Environment variables
