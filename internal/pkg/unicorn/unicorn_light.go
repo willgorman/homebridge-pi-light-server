@@ -8,13 +8,15 @@ import (
 	"github.com/arussellsaw/unicorn-go"
 	util "github.com/arussellsaw/unicorn-go/util"
 	log "github.com/sirupsen/logrus"
-	"github.com/willgorman/homebridge-pi-light/internal/pkg/light"
+	"github.com/willgorman/homebridge-pi-light-server/internal/pkg/light"
 )
 
 var w = util.White
 
-var defaultBrightness = uint(20)
-var defaultColor = light.Color{R: 255, G: 255, B: 255}
+var (
+	defaultBrightness = uint(20)
+	defaultColor      = light.Color{R: 255, G: 255, B: 255}
+)
 
 type UnicornLight struct {
 	client     unicorn.Client
@@ -46,7 +48,6 @@ func (u *UnicornLight) IsOn() (bool, error) {
 }
 
 func (u *UnicornLight) TurnOn() error {
-
 	pixels := [64]unicorn.Pixel{}
 	for i := range pixels {
 		pixels[i] = u.pixelFromColor()

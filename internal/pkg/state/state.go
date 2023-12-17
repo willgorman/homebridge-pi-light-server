@@ -7,7 +7,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/willgorman/homebridge-pi-light/internal/pkg/light"
+	"github.com/willgorman/homebridge-pi-light-server/internal/pkg/light"
 )
 
 type StateStore struct {

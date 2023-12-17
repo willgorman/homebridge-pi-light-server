@@ -3,7 +3,7 @@ package fake
 import (
 	"fmt"
 
-	"github.com/willgorman/homebridge-pi-light/internal/pkg/light"
+	"github.com/willgorman/homebridge-pi-light-server/internal/pkg/light"
 )
 
 type FakeLight struct {
@@ -43,7 +43,6 @@ func (f *FakeLight) SetBrightness(brightness uint) error {
 
 	f.brightness = brightness
 	return nil
-
 }
 
 func (f *FakeLight) SetColor(r uint, g uint, b uint) error {

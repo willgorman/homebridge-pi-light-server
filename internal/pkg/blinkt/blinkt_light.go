@@ -7,7 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	. "github.com/alexellis/blinkt_go/sysfs"
-	"github.com/willgorman/homebridge-pi-light/internal/pkg/light"
+	"github.com/willgorman/homebridge-pi-light-server/internal/pkg/light"
 )
 
 func New() *blinktLight {
