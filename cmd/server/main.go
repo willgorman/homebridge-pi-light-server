@@ -13,10 +13,10 @@ import (
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"github.com/willgorman/homebridge-pi-light/internal/pkg/blinkt"
-	"github.com/willgorman/homebridge-pi-light/internal/pkg/fake"
-	"github.com/willgorman/homebridge-pi-light/internal/pkg/light"
-	"github.com/willgorman/homebridge-pi-light/internal/pkg/unicorn"
+	"github.com/willgorman/homebridge-pi-light-server/internal/pkg/blinkt"
+	"github.com/willgorman/homebridge-pi-light-server/internal/pkg/fake"
+	"github.com/willgorman/homebridge-pi-light-server/internal/pkg/light"
+	"github.com/willgorman/homebridge-pi-light-server/internal/pkg/unicorn"
 )
 
 var theLight light.Light
@@ -40,7 +40,6 @@ func init() {
 	case "trace":
 		log.SetLevel(log.TraceLevel)
 	}
-
 }
 
 func newLight() light.Light {
@@ -59,7 +58,6 @@ func newLight() light.Light {
 		log.Info("Creating fake light")
 		return &fake.FakeLight{}
 	}
-
 }
 
 func main() {
@@ -116,11 +114,9 @@ func main() {
 	log.Println("shutting down")
 	theLight.TurnOff()
 	os.Exit(0)
-
 }
 
 func SwitchStatusHandler(w http.ResponseWriter, r *http.Request) {
-
 	log.Infof("Getting switch status for light %v", theLight)
 	on, err := theLight.IsOn()
 	if err != nil {
@@ -158,12 +154,10 @@ func SwitchHandler(on bool) func(http.ResponseWriter, *http.Request) {
 		}
 
 		w.WriteHeader(200)
-
 	}
 }
 
 func BrightnessHandler(w http.ResponseWriter, r *http.Request) {
-
 	b, err := theLight.GetBrightness()
 	if err != nil {
 		w.WriteHeader(500)
