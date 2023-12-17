@@ -1,4 +1,4 @@
-module github.com/willgorman/homebridge-pi-light
+module github.com/willgorman/homebridge-pi-light-server
 
 go 1.12
 
