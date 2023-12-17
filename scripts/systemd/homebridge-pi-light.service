@@ -2,7 +2,8 @@
 Description=Homebridge Pi Light Daemon
 
 [Service]
-ExecStart=/usr/local/bin/homebridge-pi-light
+# FIXME: this path doesn't seem right on debian bullseye?  it's just /usr/bin?
+ExecStart=/usr/bin/homebridge-pi-light
 Environment="HPILIGHT_LOG_LEVEL=debug"
 Environment="HPILIGHT_LIGHT_TYPE=unicorn"
 

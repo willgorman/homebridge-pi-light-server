@@ -15,6 +15,7 @@ builds:
   - linux
   goarch:
   - arm
+  - arm64
   goarm:
   - 6
   - 7
@@ -42,8 +43,9 @@ nfpms:
   formats:
   - deb
   - rpm
-  files:
-    "scripts/systemd/homebridge-pi-light.service": "/etc/systemd/system/homebridge-pi-light.service"
+  contents:
+  - src: "scripts/systemd/homebridge-pi-light.service"
+    dst: "/etc/systemd/system/homebridge-pi-light.service"
   scripts:
     postinstall: "scripts/systemd/postinstall.sh"
     preremove: "scripts/systemd/preremove.sh"

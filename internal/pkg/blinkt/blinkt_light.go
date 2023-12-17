@@ -6,12 +6,12 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	. "github.com/alexellis/blinkt_go/sysfs"
+	blinktgo "github.com/alexellis/blinkt_go/sysfs"
 	"github.com/willgorman/homebridge-pi-light/internal/pkg/light"
 )
 
 func New() *blinktLight {
-	b := NewBlinkt(0)
+	b := blinktgo.NewBlinkt(0)
 	b.Setup()
 	return &blinktLight{
 		light:      b,
@@ -26,7 +26,7 @@ func normalize(brightness uint) float64 {
 
 type blinktLight struct {
 	sync.RWMutex
-	light      Blinkt
+	light      blinktgo.Blinkt
 	on         bool
 	color      light.Color
 	brightness uint

@@ -37,8 +37,20 @@ Environment="HPILIGHT_LIGHT_TYPE=blinkt"
 ```
 
 ```
-sudo systemctl daemon reload && sudo systemctl restart homebridge-pi-light
+sudo systemctl daemon-reload && sudo systemctl restart homebridge-pi-light
 ```
+
+### Unicorn
+
+Depends on unicornd from github.com/pimoroni/unicorn-hat
+
+### Updating
+
+Pull the latest https://github.com/pimoroni/rpi_ws281x, not the version in the submodule
+
+Add `-lm` to `gcc -Wall unicornd.c -o unicornd -I$(ws281x_path) -L$(ws281x_path) -lws2811` in unicornd Makefile.
+
+Use `make` and `sudo make install-archlinux` (it sets up systemd services and works not just on arch)
 
 ## Setup
 
