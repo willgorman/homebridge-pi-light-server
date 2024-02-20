@@ -14,6 +14,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/willgorman/homebridge-pi-light-server/internal/pkg/blinkt"
+	"github.com/willgorman/homebridge-pi-light-server/internal/pkg/blinktperiph"
 	"github.com/willgorman/homebridge-pi-light-server/internal/pkg/fake"
 	"github.com/willgorman/homebridge-pi-light-server/internal/pkg/light"
 	"github.com/willgorman/homebridge-pi-light-server/internal/pkg/unicorn"
@@ -54,6 +55,12 @@ func newLight() light.Light {
 		return l
 	case "blinkt":
 		return blinkt.New()
+	case "blinktperiph":
+		light, err := blinktperiph.New()
+		if err != nil {
+			panic(err)
+		}
+		return light
 	default:
 		log.Info("Creating fake light")
 		return &fake.FakeLight{}

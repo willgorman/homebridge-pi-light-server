@@ -134,7 +134,7 @@ func (u *UnicornLight) SetColor(r uint, g uint, b uint) error {
 	if err != nil {
 		return err
 	}
-
+	// TODO: (willgorman) only show if light is on?
 	return u.client.Show()
 }
 

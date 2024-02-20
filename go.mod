@@ -10,4 +10,5 @@ require (
 	github.com/sirupsen/logrus v1.2.0
 	github.com/spf13/viper v1.4.0
 	github.com/stretchr/testify v1.3.0 // indirect
+	periph.io/x/host/v3 v3.8.2
 )

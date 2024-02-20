@@ -16,15 +16,8 @@ builds:
   goarch:
   - arm
   goarm:
-  - 6
-  - 7
-archives:
-- replacements:
-    darwin: Darwin
-    linux: Linux
-    windows: Windows
-    386: i386
-    amd64: x86_64
+  - "6"
+  - "7"
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -42,8 +35,9 @@ nfpms:
   formats:
   - deb
   - rpm
-  files:
-    "scripts/systemd/homebridge-pi-light.service": "/etc/systemd/system/homebridge-pi-light.service"
+  contents:
+    - src: "scripts/systemd/homebridge-pi-light.service"
+      dst:  "/etc/systemd/system/homebridge-pi-light.service"
   scripts:
     postinstall: "scripts/systemd/postinstall.sh"
     preremove: "scripts/systemd/preremove.sh"

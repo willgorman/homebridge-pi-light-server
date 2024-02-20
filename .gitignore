@@ -45,3 +45,6 @@ Temporary Items
 # goreleaser
 
 dist/*
+
+# vscode
+.vscode
